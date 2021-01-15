@@ -1,6 +1,9 @@
 from selenium import webdriver
 import unittest
 
+#Functional tests test the application from the outside
+#Unit tests test from a developers POV
+
 #Make sure 'TestCase' is capitized
 class NewVisitorTest(unittest.TestCase):
 
