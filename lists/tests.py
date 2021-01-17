@@ -2,11 +2,13 @@ from django.test import TestCase
 from django.urls import resolve
 from django.http import HttpRequest
 
+from django.template.loader import render_to_string
+
 from lists.views import home_page
 
 # Create your tests here.
 
-#Run with 'python manage.py tests'
+# Run with 'python manage.py tests'
 
 class HomePageTest(TestCase):
 
@@ -14,21 +16,47 @@ class HomePageTest(TestCase):
     #finds a function called 'home_page' 
     #home_page is the view function that we wrote AFTER trying the test
     #so initially it fails, then eventually after code will pass
+    #We can delete this test because in the next funciton Django implicitly checks for it
+    '''
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
         self.assertEqual(found.func, home_page)
-
+    '''
+    
     def test_home_page_returns_correct_html(self):
 
         #HttpRequest is what django sees when browser asks for page
-        request = HttpRequest()
+        #request = HttpRequest()
 
         #pass to home_page view and receive response in form of HttpResponse object
-        response = home_page(request)
+        #response = home_page(request)
 
         #converts bits (0's, 1's) into HTML string
-        html = response.content.decode('utf8')
+        #html = response.content.decode('utf8')
         
+        #self.assertTrue(html.startswith('<html>'))
+        #self.assertIn('<title>To-Do lists</title>', html)
+        #self.assertTrue(html.endswith('</html>'))
+
+        #We should never test constants, which is why we don't return
+        #Httprequests in views.py, instead use a function to get templates
+        #where home.html is and return html from there.
+        #This is refractoring code, where we only change format and not actual function
+        #This test below tests if views.home_page actually returns the template
+        """
+        request = HttpRequest()
+        response = home_page(request)
+        html = response.content.decode('utf8')
+        expected_html = render_to_string('home.html')
+        self.assertEqual(html, expected_html)
+        """
+        # But here is an easier way to do all of the above it besides manually creating request:
+        response = self.client.get('/')
+        html = response.content.decode('utf8')
         self.assertTrue(html.startswith('<html>'))
         self.assertIn('<title>To-Do lists</title>', html)
         self.assertTrue(html.endswith('</html>'))
+        
+        #test method Django's TestCase provides that checks what
+        #template used to render a response
+        self.assertTemplateUsed(response, 'home.html')
