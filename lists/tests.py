@@ -22,7 +22,7 @@ class HomePageTest(TestCase):
         found = resolve('/')
         self.assertEqual(found.func, home_page)
     '''
-    
+
     def test_home_page_returns_correct_html(self):
 
         #HttpRequest is what django sees when browser asks for page
@@ -60,3 +60,12 @@ class HomePageTest(TestCase):
         #test method Django's TestCase provides that checks what
         #template used to render a response
         self.assertTemplateUsed(response, 'home.html')
+
+    def test_can_save_a_POST_request(self):
+        response = self.client.post('/', data={
+            'item_text': 'A new list item'
+        })
+        self.assertIn('A new list item', response.content.decode())
+        #at first, we return HttpResponse so this will fail, but we change it to return home.html
+        self.assertTemplateUsed(response, 'home.html')
+
