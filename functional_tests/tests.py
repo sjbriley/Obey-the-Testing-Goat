@@ -1,8 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 from django.test import LiveServerTestCase
 import time
 import unittest
+
+MAX_WAIT = 10
 
 #Functional tests test the application from the outside
 #Unit tests test from a developers POV
@@ -17,11 +20,20 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
     
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows], f"New to-do item did not appear in table. Contents were: \n{table.text}")
-
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name('tr')
+                self.assertIn(row_text, [row.text for row in rows], f"New to-do item did not appear in table. Contents were: \n{table.text}")
+                return
+            #This checks for 2 exceptions-webdriverexception if page hasn't loaded
+            #and assertionerror is when table is there but hasn't reloaded (missing our row)
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
     #unittest automatically runs any function that starts with 'test'
     #also always runs setUp first, then finishes with tearDown no matter what
@@ -48,7 +60,7 @@ class NewVisitorTest(LiveServerTestCase):
         #give page a second to load before we make new assertions
         #called an 'explicit wait'
         time.sleep(1)
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
         #There is another page inviting her to make a new item
         inputbox = self.browser.find_element_by_id('id_new_item')
@@ -58,8 +70,8 @@ class NewVisitorTest(LiveServerTestCase):
         time.sleep(1)
 
         #The page updates and now shows her items on her list
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
-        self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
         #there is still a text box inviting her to add another item
         #she enters 'Use peacock feathers to make a fly"
