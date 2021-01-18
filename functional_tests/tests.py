@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from django.test import LiveServerTestCase
 import time
 import unittest
 
@@ -7,7 +8,7 @@ import unittest
 #Unit tests test from a developers POV
 
 #Make sure 'TestCase' is capitized
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     #Make sure the 'Up' and the 'Down' are capitlized
     def setUp(self):
@@ -27,7 +28,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_Start(self):
         
         #Edith heads to the homepage of a to-do page
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         #She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -64,5 +65,8 @@ class NewVisitorTest(unittest.TestCase):
         #she enters 'Use peacock feathers to make a fly"
         self.fail('Finish the test!')
 
+#Now that we use LiveServerTestCase and created a new folder with init file, we don't need this
+'''
 if __name__ == '__main__':
     unittest.main()
+'''
