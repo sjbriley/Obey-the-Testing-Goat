@@ -16,6 +16,12 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
     
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows], f"New to-do item did not appear in table. Contents were: \n{table.text}")
+
+
     #unittest automatically runs any function that starts with 'test'
     #also always runs setUp first, then finishes with tearDown no matter what
     def test_Start(self):
@@ -41,6 +47,7 @@ class NewVisitorTest(unittest.TestCase):
         #give page a second to load before we make new assertions
         #called an 'explicit wait'
         time.sleep(1)
+        self.check_for_row_in_list_table('1: Buy peacock feathers')
 
         #There is another page inviting her to make a new item
         inputbox = self.browser.find_element_by_id('id_new_item')
@@ -50,10 +57,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         #The page updates and now shows her items on her list
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy peacock feathers', [row.text for row in rows], f"New to-do item did not appear in table. Contents were: \n{table.text}")
-        self.assertIn('2: Use peacock feathers to make a fly', [row.text for row in rows], f"New to-do item did not appear in table. Contents were: \n{table.text}")
+        self.check_for_row_in_list_table('1: Buy peacock feathers')
+        self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
         #there is still a text box inviting her to add another item
         #she enters 'Use peacock feathers to make a fly"
