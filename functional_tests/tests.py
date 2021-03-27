@@ -5,6 +5,7 @@ from selenium.common.exceptions import WebDriverException
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase # we need STATIC to be able to handle our static files (css and bootsrap)
 import time
 import unittest
+import os
 
 MAX_WAIT = 10
 
@@ -17,6 +18,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
     #Make sure the 'Up' and the 'Down' are capitlized
     def setUp(self):
         self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server # live_server_url is StaticLiveServerTestCase default own test server, so we change to real server
 
     def tearDown(self):
         self.browser.quit()
