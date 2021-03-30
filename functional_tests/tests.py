@@ -20,7 +20,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser = webdriver.Firefox()
         staging_server = os.environ.get('STAGING_SERVER')
         if staging_server:
-            self.live_server_url = 'http://' + staging_server # live_server_url is StaticLiveServerTestCase default own test server, so we change to real server
+            pass
+            #self.live_server_url = 'http://' + staging_server # live_server_url is StaticLiveServerTestCase default own test server, so we change to real server
+        self.live_server_url = 'http://mydjangoproject.xyz'
 
     def tearDown(self):
         self.browser.quit()
