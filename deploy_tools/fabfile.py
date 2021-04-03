@@ -7,7 +7,7 @@ REPO_URL = 'https://github.com/sjbriley/to_do.git'
 def deploy():
     # env.user is signed in user, env.host is address of server from command line
     # env.host: /www.mydjangoproject.xyz/to_do/
-    site_folder = f'/home/{env.user}/sites/{env.host}'
+    site_folder = '/home/{}/sites/{}'.format(env.user, env.host)
     run(f'mkdir -p {site_folder}')
     with cd(site_folder): # run these commands inside this directory
         _get_latest_source()
