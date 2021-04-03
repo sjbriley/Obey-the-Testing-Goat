@@ -7,8 +7,8 @@ REPO_URL = 'https://github.com/sjbriley/to_do.git'
 def deploy():
     # env.user is signed in user, env.host is address of server from command line
     # env.host: /www.mydjangoproject.xyz/to_do/
-    site_folder = f"/home/{env.user}/sites/{env.host}"
-    run(f"mkdir -p {site_folder}")
+    site_folder = f'/home/{env.user}/sites/{env.host}'
+    run(f'mkdir -p {site_folder}')
     with cd(site_folder): # run these commands inside this directory
         _get_latest_source()
         _update_virtualenv()
@@ -17,10 +17,10 @@ def deploy():
         _update_database()
 
 def _get_latest_source():
-    if exists(".git"):
-        run("git fetch")
+    if exists('.git'):
+        run('git fetch')
     else:
-        run(f"git clone {REPO_URL}")
+        run(f'git clone {REPO_URL}')
     current_commit = local("git log -n 1 -- format=%H", capture=True)
     run(f"git reset --hard {current_commit}")
 
