@@ -7,14 +7,20 @@ REPO_URL = 'https://github.com/sjbriley/to_do.git'
 def deploy():
     # env.user is signed in user, env.host is address of server from command line
     # env.host: /www.mydjangoproject.xyz/to_do/
-    site_folder = '/home/{}/sites/{}'.format(env.user, env.host)
-    run(f'mkdir -p {site_folder}')
+    site_folder = '/home/sam/django/to_do'#.format(env.user, env.host)
+    print('site_folder: ' + site_folder)
+    #run(f'mkdir -p {site_folder}')
     with cd(site_folder): # run these commands inside this directory
         _get_latest_source()
+        print('ran _get_latest_source')
         _update_virtualenv()
+        print('_update_virtualenv')
         _create_or_update_dotenv()
+        print('ran _create_or_update_dotenv')
         _update_static_files()
+        print('ran _update_static_files')
         _update_database()
+        print('ran _update_database')
 
 def _get_latest_source():
     if exists('.git'):
@@ -42,3 +48,6 @@ def _update_static_files():
 
 def _update_database():
     run("./virtualenv/bin/python manage.py migrate --noinput")
+
+if __name__=='__main__':
+    deploy()
