@@ -3,9 +3,9 @@
 
     <head>
         {% load static %}
-        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"> 
-        <link href="{% static "bootstrap/js/bootstrap.css" %}" rel="stylesheet">
-        <link href="{% static "base.css" %}" rel="stylesheet">
+        <link href='{% static "bootstrap/css/bootstrap.min.css" %}' rel="stylesheet"> 
+        <link href='{% static "bootstrap/js/bootstrap.css" %}' rel="stylesheet">
+        <link href='{% static "base.css" %}' rel="stylesheet">
         <!-- we needed to add /static/bootstrap in href above because django looks for static folder for css -->
         <title>To-Do lists</title>
     </head>
@@ -19,6 +19,11 @@
                     <form method="POST" action="{% block form_action %}{% endblock %}">
                         <input name="item_text" id="id_new_item" class="form-control input-lg" placeholder="Enter a to-do item" />
                         {% csrf_token %}
+                        {% if error %}
+                            <div class="form-control input-lg">
+                                <span class="help-block">{{ error }}</span>
+                            </div>
+                        {% endif %}
                     </form>
             </div>
 
