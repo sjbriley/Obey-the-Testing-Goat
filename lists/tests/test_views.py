@@ -8,6 +8,7 @@ from lists.views import home_page
 
 from lists.models import Item, List
 from django.utils.html import escape
+from lists.forms import ItemForm
 
 # Run with 'python manage.py test lists'
 
@@ -41,6 +42,10 @@ class HomePageTest(TestCase):
     def test_only_saves_items_when_necessary(self):
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
+        
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)
 
 class ListViewTest(TestCase):
     
@@ -98,6 +103,13 @@ class ListViewTest(TestCase):
         
         self.assertRedirects(response, f'/lists/{correct_list.id}/')
         
+    def test_validation_errors_end_up_on_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.post(f'/lists/{list_.id}/',data={'item_text':''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'list.html')
+        expected_error = escape("You can't have an empty list item")
+        self.assertContains(response, expected_error)
 class NewListTest(TestCase):
 
     def test_can_save_a_POST_request(self):
